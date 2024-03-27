@@ -1,0 +1,28 @@
+syntax = "proto3";
+option go_package = "../;student";
+
+service Student {
+  rpc HelloWorld(HelloRequest) returns (HelloResponse) {}
+  rpc Add(StudentInfo) returns (Result) {}
+  rpc QueryByID(StudentID) returns (StudentInfo) {}
+  rpc QueryByName(StudentName) returns (StudentInfo) {}
+  rpc Delete(StudentID) returns (Result) {}
+}
+
+message HelloRequest { string name = 1; }
+
+message HelloResponse { string message = 1; }
+
+message AddStudentResult {}
+
+message StudentInfo {
+  string name = 1;
+  string ID = 2;
+  int32 age = 3;
+}
+
+message Result { bool success = 1; }
+
+message StudentID { string id = 1; }
+
+message StudentName { string name = 1; }
