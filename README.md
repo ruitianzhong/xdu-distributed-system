@@ -1,4 +1,4 @@
-
+# Note on installation
 
 ```bash
 
@@ -8,6 +8,10 @@ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
 go get google.golang.org/grpc
 protoc --go_out=. --go_opt=paths=source_relative     --go-grpc_out=.   --go-grpc_opt=paths=source_relative     student/student.proto 
 
+python -m pip install grpcio-tools
+pip install grpcio
+python3 -m grpc_tools.protoc -I../student --python_out=. --pyi_out=.
+ --grpc_python_out=. ../student/student.proto
 ```
 
 Some Notes:
