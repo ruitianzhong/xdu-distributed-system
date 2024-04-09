@@ -31,7 +31,7 @@ public class Device {
             String msg = gson.toJson(deviceMessage);
             producer.sendMessage(msg);
             try {
-                Thread.sleep(10000);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 break;
             }

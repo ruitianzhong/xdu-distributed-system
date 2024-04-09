@@ -29,12 +29,7 @@ public class WrappedConsumer {
                 .setClientConfiguration(clientConfiguration)
                 .setConsumerGroup(consumerGroup)
                 .setSubscriptionExpressions(Collections.singletonMap(topic, filterExpression))
-                .setMessageListener(messageView -> {
-                    System.out.println("Starting to handle");
-                    var result = consumerHandler.handle(messageView);
-                    System.out.println("End");
-                    return result;
-                })
+                .setMessageListener(consumerHandler::handle)
                 .build();
     }
 

@@ -6,7 +6,7 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws ClientException, IOException {
-        StatisticCalculator sc = new StatisticCalculator(10);
+        StatisticCalculator sc = new StatisticCalculator(200);
         sc.run();
     }
 }

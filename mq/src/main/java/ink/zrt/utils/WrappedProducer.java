@@ -12,28 +12,27 @@ import java.io.IOException;
 public class WrappedProducer {
     private final org.apache.rocketmq.client.apis.producer.Producer producer;
     private final ClientServiceProvider provider;
+    private final String topic;
 
     public WrappedProducer(String topic) throws ClientException {
         String endpoint = "localhost:8081";
-        // 消息发送的目标Topic名称，需要提前创建。
         provider = ClientServiceProvider.loadService();
         ClientConfigurationBuilder builder = ClientConfiguration.newBuilder().setEndpoints(endpoint);
         ClientConfiguration configuration = builder.build();
-        // 初始化Producer时需要设置通信配置以及预绑定的Topic。
         producer = provider.newProducerBuilder()
                 .setTopics(topic)
                 .setClientConfiguration(configuration)
                 .build();
+        this.topic = topic;
     }
 
     public void sendMessage(String msg) {
         Message message = provider.newMessageBuilder()
-                .setTopic("device")
+                .setTopic(topic)
                 .setBody(msg.getBytes())
                 .build();
         try {
             SendReceipt sendReceipt = producer.send(message);
-            System.out.println(sendReceipt.getMessageId());
         } catch (ClientException e) {
             System.out.println(e.getMessage());
         }

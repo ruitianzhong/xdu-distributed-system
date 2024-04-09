@@ -79,7 +79,7 @@ public class StatisticCalculator implements ConsumerHandler {
         statisticMessage.id = id;
         statisticMessage.variance = sum / (double) list.size();
         statisticMessage.min = min;
-//        wrappedProducer.sendMessage(gson.toJson(statisticMessage));
+        wrappedProducer.sendMessage(gson.toJson(statisticMessage));
         System.out.println(gson.toJson(statisticMessage));
     }
 

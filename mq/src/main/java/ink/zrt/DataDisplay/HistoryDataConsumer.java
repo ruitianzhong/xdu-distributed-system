@@ -31,7 +31,6 @@ public class HistoryDataConsumer implements ConsumerHandler {
 
         mv.getBody().get(b);
         String msg = new String(b);
-        System.out.println("History: " + msg);
         DeviceMessage deviceMessage = gson.fromJson(msg, DeviceMessage.class);
         this.handleInternal(deviceMessage);
 

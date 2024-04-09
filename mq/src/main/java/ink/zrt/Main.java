@@ -31,7 +31,6 @@ public class Main {
                 .setConsumerGroup(consumerGroup)
                 .setSubscriptionExpressions(Collections.singletonMap(topic, filterExpression))
                 .setMessageListener(messageView -> {
-                    System.out.println("success" + messageView.getMessageId());
 
                     System.out.println(messageView);
                     byte[] b = new byte[messageView.getBody().limit()];
