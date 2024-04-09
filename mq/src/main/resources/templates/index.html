@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.w3.org/1999/xhtml">
+<head lang="en">
+    <meta charset="UTF-8"/>
+    <title>Spring Boot中使用ECharts</title>
+    <script src="https://cdn.bootcss.com/echarts/4.6.0/echarts.min.js"></script>
+</head>
+<body>
+<div id="main" style="width: 1000px;height:400px;"></div>
+<div>Device ID:</div>
+<div th:text="${summary.id}"></div>
+<div>Maximum:</div>
+<div th:text="${summary.max}"></div>
+<div>Minimum:</div>
+<div th:text="${summary.min}"></div>
+<div>Average:</div>
+<div th:text="${summary.average}"></div>
+<div>Variance:</div>
+<div th:text="${summary.variance}"></div>
+
+</body>
+
+<script type="text/javascript" th:inline="javascript">
+    let myChart = echarts.init(document.getElementById('main'));
+    var json = [[${y_axis}]];
+    var y = JSON.parse(json);
+    console.log(y.length);
+    var x = [];
+    for (i = 0; i<y.length;i++){
+        x.push(i+1);
+    }
+
+    let option = {
+        title: {
+            text: 'Data Display'
+        },
+        tooltip: {},
+        xAxis: {
+            data: x,
+        },
+
+        yAxis: {},
+        series: [{
+            data: y,
+            type: 'line'
+        }]
+    };
+    myChart.setOption(option);
+</script>
+</html>

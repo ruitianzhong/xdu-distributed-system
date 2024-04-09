@@ -62,6 +62,7 @@ public class HistoryDataConsumer implements ConsumerHandler {
         int i = 0;
         for (DeviceMessage deviceMessage : list) {
             ret[i] = deviceMessage.data;
+            i++;
         }
         lock.unlock();
         return ret;
