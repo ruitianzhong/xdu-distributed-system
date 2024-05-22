@@ -1,0 +1,108 @@
+<template>
+  <!--  <v-container class="fill-height">-->
+  <v-responsive
+    class="align-centerfill-height mx-auto"
+    max-width="900"
+  >
+    <div v-if="enter">
+
+      <div class="mt-5 mb-4" v-if="currentTime!='-1'">
+        当前时间：{{ dayjs(currentTime).format("YYYY-MM-DD HH:mm:ss") }}
+      </div>
+
+      <div class="mb-4">
+        <DatePicker v-model="date" mode="time" popover/>
+        <v-btn text="修改时间" variant="flat" color="#07c160" class="ml-5 align-center mt-8"></v-btn>
+      </div>
+      <v-divider></v-divider>
+      <v-text-field class="mt-5" label="消息" variant="outlined" hide-details
+                    append-inner-icon="mdi-send" @click:append-inner="onClick"></v-text-field>
+      <v-container>
+        <v-list>
+          <v-list-item
+            v-for="msg in messageList"
+            :key="msg.id"
+            :title="'用户 ' + msg.username"
+            :subtitle=" '消息：'+msg.msg"
+          ></v-list-item>
+        </v-list>
+      </v-container>
+    </div>
+    <div v-else>
+      <v-sheet class="mx-auto mt-10" width="300">
+        <div class="text-h5 align-center text-center mt-4 mb-7"><strong>请输入用户名</strong></div>
+        <v-form ref="form">
+          <v-text-field
+            v-model="name"
+            variant="outlined"
+            density="compact"
+            :counter="10"
+            label="用户名"
+            required
+          ></v-text-field>
+
+          <div class="d-flex flex-column">
+            <v-btn
+              class="mt-4"
+              color="#07c160"
+              block
+              :disabled="name==''"
+              @click="validate"
+            >
+              进入
+            </v-btn>
+
+          </div>
+        </v-form>
+      </v-sheet>
+    </div>
+  </v-responsive>
+  <!--  </v-container>-->
+</template>
+
+<script>
+//
+import dayjs from "dayjs";
+import {DatePicker} from 'v-calendar';
+import 'v-calendar/style.css';
+
+export default {
+  components: {DatePicker},
+  data() {
+    return {
+      messageList: [
+        {
+          id: '1',
+          username: 'test1',
+          msg: 'hello world'
+        },
+        {
+          id: '2',
+          username: "test2",
+          msg: "ping",
+        }
+      ],
+      currentTime: 1492665265000,
+      date: new Date(),
+      name: '',
+      enter: false,
+    }
+  },
+
+  methods: {
+    onClick() {
+
+    },
+    validate() {
+      this.enter = true;
+
+    }
+  },
+  computed: {
+    dayjs() {
+      return dayjs
+    }
+  }
+}
+
+</script>
