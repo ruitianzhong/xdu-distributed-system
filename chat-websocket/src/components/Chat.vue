@@ -8,11 +8,13 @@
 
       <div class="mt-5 mb-4" v-if="currentTime!='-1'">
         当前时间：{{ dayjs(currentTime).format("YYYY-MM-DD HH:mm:ss") }}
+        {{ currentTime }}
       </div>
 
       <div class="mb-4">
         <DatePicker v-model="date" mode="time" popover/>
-        <v-btn text="修改时间" variant="flat" color="#07c160" class="ml-5 align-center mt-8"></v-btn>
+        <v-btn text="修改时间" variant="flat" color="#07c160" class="ml-5 align-center mt-8"
+               @click="onTimeChange"></v-btn>
       </div>
       <v-divider></v-divider>
       <v-text-field class="mt-5" label="消息" variant="outlined" hide-details
@@ -82,10 +84,11 @@ export default {
           msg: "ping",
         }
       ],
-      currentTime: 1492665265000,
+      currentTime: 1716395571225,
       date: new Date(),
       name: '',
       enter: false,
+      socket: undefined,
     }
   },
 
@@ -93,7 +96,41 @@ export default {
     onClick() {
 
     },
+
+    onTimeChange() {
+      if (this.socket == undefined) {
+        return;
+      }
+
+      const timeChangeMsg = {
+        ms: this.date.valueOf(),
+      }
+      this.socket.send(JSON.stringify(timeChangeMsg));
+    },
+    handleMsg(event) {
+      if (event.data.ms % 10000 == 0) {
+        console.log("Message ", event.data);
+
+      }
+      const msg = JSON.parse(event.data);
+      this.currentTime = msg.ms;
+    },
+
     validate() {
+      this.socket = new WebSocket("ws://localhost:8080");
+
+      this.socket.addEventListener("open", function (event) {
+      });
+
+      this.socket.addEventListener("message", this.handleMsg)
+      this.socket.addEventListener("close", function (event) {
+        console.log("connection is closed");
+      })
+
+      this.socket.addEventListener("error", function (event) {
+        console.log(event);
+      })
+
       this.enter = true;
 
     }
