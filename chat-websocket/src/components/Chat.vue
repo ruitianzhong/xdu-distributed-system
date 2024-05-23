@@ -1,16 +1,13 @@
 <template>
-  <!--  <v-container class="fill-height">-->
   <v-responsive
     class="align-centerfill-height mx-auto"
     max-width="900"
   >
     <div v-if="enter">
-
       <div class="mt-5 mb-4" v-if="currentTime!='-1'">
         当前时间：{{ dayjs(currentTime).format("YYYY-MM-DD HH:mm:ss") }}
         {{ currentTime }}
       </div>
-
       <div class="mb-4">
         <DatePicker v-model="date" mode="time" popover/>
         <v-btn text="修改时间" variant="flat" color="#07c160" class="ml-5 align-center mt-8"
@@ -18,7 +15,7 @@
       </div>
       <v-divider></v-divider>
       <v-text-field class="mt-5" label="消息" variant="outlined" hide-details
-                    append-inner-icon="mdi-send" @click:append-inner="onClick"></v-text-field>
+                    append-inner-icon="mdi-send" v-model="msg" @click:append-inner="onClick"></v-text-field>
       <v-container>
         <v-list>
           <v-list-item
@@ -53,13 +50,11 @@
             >
               进入
             </v-btn>
-
           </div>
         </v-form>
       </v-sheet>
     </div>
   </v-responsive>
-  <!--  </v-container>-->
 </template>
 
 <script>
@@ -89,11 +84,23 @@ export default {
       name: '',
       enter: false,
       socket: undefined,
+      msg: '',
     }
   },
 
   methods: {
     onClick() {
+      if (this.msg == '' && this.name == '' && this.socket) {
+        return;
+      }
+
+      const data = {
+        ms: -1,
+        username: this.name,
+        msg: this.msg,
+      };
+
+      this.socket.send(JSON.stringify(data));
 
     },
 
@@ -108,22 +115,27 @@ export default {
       this.socket.send(JSON.stringify(timeChangeMsg));
     },
     handleMsg(event) {
-      if (event.data.ms % 10000 == 0) {
-        console.log("Message ", event.data);
-
-      }
       const msg = JSON.parse(event.data);
-      this.currentTime = msg.ms;
+      if (msg.ms > 0) {
+        this.currentTime = msg.ms;
+      } else {
+        const show = {
+          username: msg.username,
+          id: msg.id,
+          msg: msg.msg,
+        }
+        this.messageList.push(show);
+      }
+
     },
 
     validate() {
       this.socket = new WebSocket("ws://localhost:8080");
-
-      this.socket.addEventListener("open", function (event) {
+      this.socket.addEventListener("open", function () {
       });
 
       this.socket.addEventListener("message", this.handleMsg)
-      this.socket.addEventListener("close", function (event) {
+      this.socket.addEventListener("close", function () {
         console.log("connection is closed");
       })
 
