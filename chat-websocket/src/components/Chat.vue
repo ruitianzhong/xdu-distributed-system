@@ -67,18 +67,7 @@ export default {
   components: {DatePicker},
   data() {
     return {
-      messageList: [
-        {
-          id: '1',
-          username: 'test1',
-          msg: 'hello world'
-        },
-        {
-          id: '2',
-          username: "test2",
-          msg: "ping",
-        }
-      ],
+      messageList: [],
       currentTime: 1716395571225,
       date: new Date(),
       name: '',
@@ -91,6 +80,9 @@ export default {
   methods: {
     onClick() {
       if (this.msg == '' && this.name == '' && this.socket) {
+        return;
+      }
+      if (this.socket == undefined || this.socket.readyState != WebSocket.OPEN) {
         return;
       }
 
