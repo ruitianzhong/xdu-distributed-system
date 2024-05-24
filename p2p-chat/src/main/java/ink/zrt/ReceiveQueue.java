@@ -1,15 +1,19 @@
 package ink.zrt;
 
+import javax.swing.*;
 import java.util.LinkedList;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class ReceiveQueue {
 
+    Node node;
+    JTextArea area;
 
-
-    public ReceiveQueue() {
+    public ReceiveQueue(Node node, JTextArea area) {
         list = new LinkedList<>();
         lock = new ReentrantLock();
+        this.node = node;
+        this.area = area;
     }
 
     final private LinkedList<Message> list;
@@ -64,4 +68,29 @@ public class ReceiveQueue {
         throw new RuntimeException("configuration error: same node id");
     }
 
+    public void start() {
+
+        new Thread(() -> {
+
+            while (true) {
+                lock.lock();
+                if (list.isEmpty()) {
+                    lock.unlock();
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        System.out.println(e.getMessage());
+                    }
+                    continue;
+                }
+                // check first
+                Message m = list.getFirst();
+                if (node.nodeNum() == node.ackCount(m.getId())) {
+                    node.deleteAckCountRecord(m.getId());
+                    area.append(m.getMsg() + "\n");
+                }
+                lock.unlock();
+            }
+        }).start();
+    }
 }

@@ -10,7 +10,7 @@ public class ReceiveQueueTest {
         m1.setTs(1);
         m2.setTs(2);
 
-        ReceiveQueue receiveQueue = new ReceiveQueue();
+        ReceiveQueue receiveQueue = new ReceiveQueue(null, null);
         receiveQueue.add(m2);
         receiveQueue.add(m1);
 
@@ -25,7 +25,7 @@ public class ReceiveQueueTest {
         m1.setNodeID(1);
         m2.setTs(1);
         m2.setNodeID(2);
-        ReceiveQueue queue = new ReceiveQueue();
+        ReceiveQueue queue = new ReceiveQueue(null, null);
         queue.add(m2);
         queue.add(m1);
         Assert.assertEquals(queue.pop().getNodeID(), 1);

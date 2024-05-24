@@ -1,5 +1,6 @@
 package ink.zrt;
 
+import ink.zrt.chatclient.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -7,12 +8,18 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import javax.swing.*;
+import java.lang.reflect.InvocationTargetException;
+
 @SpringBootApplication
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException, InvocationTargetException {
         // gson example
-        Configuration.node.init(8080, new int[]{8080});
+        JTextArea showArea = new JTextArea(25, 34);
+        Client client = new Client(showArea);
+        SwingUtilities.invokeLater(client::createAndShowGUI);
+        Configuration.node.init(8080, new int[]{8080}, showArea);
         SpringApplication.run(Main.class, args);
     }
 }

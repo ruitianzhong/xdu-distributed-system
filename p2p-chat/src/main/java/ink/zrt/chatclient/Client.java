@@ -7,8 +7,16 @@ import javax.swing.*;
 public class Client {
 
     public int id;
+    JTextArea showArea;
 
-    private void createAndShowGUI() {
+    public Client(JTextArea showArea) {
+        this.showArea = showArea;
+    }
+
+    public Client() {
+    }
+
+    public void createAndShowGUI() {
         //1.创建一个JFrame聊天窗口
         JFrame f = new JFrame("P2P 群聊");
         f.setLayout(new BorderLayout());
@@ -17,14 +25,14 @@ public class Client {
         f.setVisible(true);
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //2.创建一个JTextArea文本域，用来显示多行聊天信息
-        JTextArea showArea = new JTextArea(25, 34);
+
         //创建一个JScrollPane滚动面板组件，将JTextArea文本框作为显示组件
         JScrollPane scrollPane = new JScrollPane(showArea);
         showArea.setEditable(false);
         JPanel panel = getPanel(showArea);
         //5.向JFrame聊天窗口的顶部和尾部分别加入面板组件JScrollPane和JPanel
         f.add(scrollPane, "North");
-        f.add(panel, "South");
+        f.add(panel, "West");
     }
 
     private static JPanel getPanel(JTextArea showArea) {

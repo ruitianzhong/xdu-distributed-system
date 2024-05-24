@@ -1,5 +1,6 @@
 package ink.zrt;
 
+import javax.swing.*;
 import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -17,9 +18,9 @@ public class Node {
 
     public int nodeId;
 
-    ReceiveQueue queue = new ReceiveQueue();
+    ReceiveQueue queue;
 
-    public void init(int nodeId, int[] ports) {
+    public void init(int nodeId, int[] ports, JTextArea showArea) {
         this.peers = new Sender[ports.length];
         this.clock = 0;
         lock = new ReentrantLock();
@@ -27,7 +28,9 @@ public class Node {
 
         for (int i = 0; i < ports.length; i++) {
             peers[i] = new Sender(ports[i]);
+
         }
+        queue = new ReceiveQueue(this, showArea);
     }
 
     public void broadcast(Message message) {
@@ -39,6 +42,8 @@ public class Node {
         for (var peer : peers) {
             peer.send(message);
         }
+        // TODO add clock
+        clock++;
         lock.unlock();
     }
 
@@ -46,10 +51,12 @@ public class Node {
         lock.lock();
         assert (!msg.isACK());
         queue.add(msg);
+        // TODO: adjust clock
         lock.unlock();
     }
 
     public void addAck(Message msg) {
+        // TODO: adjust clock
         assert (msg.isACK());
         lock.lock();
         if (!map.containsKey(msg.getId())) {
@@ -62,4 +69,25 @@ public class Node {
 
         lock.unlock();
     }
+
+    public int ackCount(String id) {
+        int ret = 0;
+        lock.lock();
+        if (map.containsKey(id)) {
+            ret = map.get(id);
+        }
+        lock.unlock();
+        return ret;
+    }
+
+    public int nodeNum() {
+        return peers.length;
+    }
+
+    public void deleteAckCountRecord(String id) {
+        lock.lock();
+        map.remove(id);
+        lock.unlock();
+    }
+
 }
