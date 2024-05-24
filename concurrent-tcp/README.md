@@ -109,6 +109,9 @@ remains in a "zombie" state
 
 -1 meaning wait for any child process.
 
+if WNOHANG was specified and one or more child(ren) speci‐
+fied by pid exist, but have not yet changed state, then 0 is returned.
+
 ```
        WIFEXITED(wstatus)
               returns true if the child terminated  normally,  that
@@ -128,5 +131,4 @@ remains in a "zombie" state
 
 [link](https://www.cnblogs.com/aoxueshou/p/13546814.html)
 
-## Strtol()
 

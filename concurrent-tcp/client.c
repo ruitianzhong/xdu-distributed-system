@@ -9,14 +9,14 @@
 #include <arpa/inet.h>
 #define BUF_MAX 100
 
-int main(int argc, char *argv[]) {
+int main(const int argc, char *argv[]) {
     if (argc != 4) {
         printf("Usage: ./client [IP] [PORT] [TIME(second)]\n");
         exit(EXIT_FAILURE);
     }
 
-    char *ip_str = argv[1];
-    int port = atoi(argv[2]);
+    const char *ip_str = argv[1];
+    const int port = atoi(argv[2]);
     if (port <= 0 || port > 65535) {
         printf("port %d is invalid\n", port);
         exit(EXIT_FAILURE);
@@ -46,8 +46,8 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    const char *s = "ping";
-    int n = write(sockfd, s, strlen(s));
+    const uint32_t t = htonl(time);
+    int n = write(sockfd, &t, sizeof(uint32_t));
     if (n == -1) {
         perror("write");
         exit(EXIT_FAILURE);

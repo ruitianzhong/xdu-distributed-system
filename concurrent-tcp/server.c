@@ -11,8 +11,27 @@
 #include <sys/wait.h>
 #define BUF_SIZE 100
 
-int handleConnection(int connfd) {
-    int ret = fork();
+void handleSIGCHILD(int sig) {
+    int status;
+
+    const int pid = waitpid(-1, &status, WNOHANG);
+    // WNOHANG to achieve concurency
+    if (pid == 0) {
+        printf("no state change for now\n");
+        return;
+    }
+    if (pid == -1) {
+        perror("waitpid");
+        return;
+    }
+
+    if (WIFEXITED(status)) {
+        printf("child process %d return %d\n", pid,WEXITSTATUS(status));
+    }
+}
+
+int handleConnection(const int connfd, const int serverfd) {
+    const int ret = fork();
     if (ret == -1) {
         return -1;
     }
@@ -20,25 +39,34 @@ int handleConnection(int connfd) {
         close(connfd);
         return ret;
     }
+    close(serverfd);
+    uint32_t time;
+    char *p = (char *) &time;
+    int i = 0;
+    while (i < sizeof(uint32_t)) {
+        const int n = read(connfd, p + i, sizeof(time));
+        if (n == -1) {
+            close(connfd);
+            exit(EXIT_FAILURE);
+        }
+        if (n == 0) {
+            printf("EOF\n");
+            exit(EXIT_FAILURE);
+        }
+        i += n;
+    }
+    time = ntohl(time);
 
+    printf("server received %d bytes time %d\n", i, time);
+    // sleeping for a long time
+    sleep(time);
 
-    char buf[BUF_SIZE];
-    int n = read(connfd, buf, sizeof(buf));
-    printf("server received %d bytes\n", n);
+    const char *s = "ok";
+    const int n = write(connfd, s, strlen(s));
     if (n == -1) {
-        perror("read");
+        close(connfd);
         exit(EXIT_FAILURE);
     }
-    if (n == 0) {
-        close(connfd);
-    }
-
-    for (int i = 0; i < n; i++) {
-        putchar(buf[i]);
-    }
-    printf("\n");
-    char *s = "pong";
-    n = write(connfd, s, strlen(s));
     printf("send %d bytes\n", n);
 
     close(connfd);
@@ -52,7 +80,6 @@ int main(int argc, char *argv[]) {
 
     if (argc != 3) {
         printf("Usage: ./server [IP address] [PORT]\n");
-        printf("%d\n", argc);
         exit(EXIT_FAILURE);
     }
     char *ip_addr_str = argv[1];
@@ -85,20 +112,14 @@ int main(int argc, char *argv[]) {
         perror("listen");
         exit(EXIT_FAILURE);
     }
-
-    int len = sizeof(peer_addr);
-    const int connfd = accept(sockfd, (struct sockaddr *) &peer_addr, (socklen_t *) &len);
-    if (connfd == -1) {
-        perror("accept");
-        exit(EXIT_FAILURE);
+    signal(SIGCHLD, handleSIGCHILD);
+    for (;;) {
+        int len = sizeof(peer_addr);
+        const int connfd = accept(sockfd, (struct sockaddr *) &peer_addr, (socklen_t *) &len);
+        if (connfd == -1) {
+            perror("accept");
+            exit(EXIT_FAILURE);
+        }
+        handleConnection(connfd, sockfd);
     }
-    handleConnection(connfd);
-    int status;
-    waitpid(-1, &status, 0);
-
-    if (WIFEXITED(status)) {
-        printf("child process return %d\n",WEXITSTATUS(status));
-    }
-
-    exit(EXIT_SUCCESS);
 }
