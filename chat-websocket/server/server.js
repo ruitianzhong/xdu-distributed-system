@@ -3,7 +3,7 @@ import 'async-lock'
 import AsyncLock from "async-lock";
 import {v4 as uuidv4} from 'uuid';
 
-const wss = new WebSocketServer({port: 8080});
+const wss = new WebSocketServer({port: 7777});
 
 let currentTime = (new Date()).valueOf();
 console.log(currentTime);
@@ -16,7 +16,7 @@ wss.on('connection', function connection(ws) {
 
   ws.on('message', function message(data) {
     const msg = JSON.parse(data);
-    if (!'ms' in msg) {
+    if (!('ms' in msg)) {
       return;
     }
     if (msg.ms > 0) {
@@ -36,18 +36,22 @@ wss.on('connection', function connection(ws) {
 })
 console.log("set time interval");
 setInterval(function () {
+  lock.acquire("global", function () {
+    currentTime += 1000;
+  }, undefined, undefined)
   wss.clients.forEach(function each(client) {
     if (client.readyState == WebSocket.OPEN) {
       const msg = {
         ms: currentTime, msg: '', user: '',
       }
       client.send(JSON.stringify(msg))
-
-      lock.acquire("global", function () {
-        currentTime += 1000;
-      }, undefined, undefined)
-
     }
   })
 }, 1000)
 
+
+setInterval(() => {
+  lock.acquire("global", function () {
+    currentTime = (new Date()).valueOf();
+  }, undefined, undefined)
+}, 60 * 60 * 1000) // 1 hour

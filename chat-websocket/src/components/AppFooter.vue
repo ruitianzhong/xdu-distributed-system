@@ -3,7 +3,7 @@
     <div
       class="text-caption text-disabled text-center align-center mx-auto"
     >
-      Copyright &copy; 2024-{{ (new Date()).getFullYear() }} <span class="d-none d-sm-inline-block">Ruitian Zhong</span>
+      Copyright &copy; 2024-{{ (new Date()).getFullYear() }} <span class="d-sm-inline-block">Ruitian Zhong</span>
     </div>
   </v-footer>
 </template>
