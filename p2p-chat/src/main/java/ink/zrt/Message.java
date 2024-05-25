@@ -10,21 +10,21 @@ public class Message {
     private long ts;
     private String msg;
     private int nodeID;
-
-    private boolean isACK;
+    private boolean ack;
 
     public Message() {
     }
 
-    public Message(String id, long ts, String msg, int nodeID) {
+    public Message(String id, long ts, String msg, int nodeID, boolean isAck) {
         this.id = id;
         this.ts = ts;
         this.msg = msg;
         this.nodeID = nodeID;
+        this.ack = isAck;
     }
 
     public Message duplicate() {
-        return new Message(this.id, this.ts, this.msg, this.nodeID);
+        return new Message(this.id, this.ts, this.msg, this.nodeID, this.ack);
     }
 
 

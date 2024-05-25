@@ -14,12 +14,13 @@ import java.lang.reflect.InvocationTargetException;
 @SpringBootApplication
 public class Main {
 
-    public static void main(String[] args) throws InterruptedException, InvocationTargetException {
-        // gson example
+    public static void main(String[] args) {
         JTextArea showArea = new JTextArea(25, 34);
-        Client client = new Client(showArea);
-        SwingUtilities.invokeLater(client::createAndShowGUI);
+
         Configuration.node.init(8080, new int[]{8080}, showArea);
+        Client client = new Client(showArea, Configuration.node);
+        SwingUtilities.invokeLater(client::createAndShowGUI);
+
         SpringApplication.run(Main.class, args);
     }
 }

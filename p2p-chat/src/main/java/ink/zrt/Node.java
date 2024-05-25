@@ -1,5 +1,7 @@
 package ink.zrt;
 
+import lombok.Getter;
+
 import javax.swing.*;
 import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantLock;
@@ -10,12 +12,14 @@ public class Node {
     }
 
     public Sender[] peers;
+    @Getter
     public long clock;
 
     public ReentrantLock lock;
 
     HashMap<String, Integer> map = new HashMap<>();
 
+    @Getter
     public int nodeId;
 
     ReceiveQueue queue;
@@ -28,16 +32,20 @@ public class Node {
 
         for (int i = 0; i < ports.length; i++) {
             peers[i] = new Sender(ports[i]);
+            // starting the sender thread
+            peers[i].start();
 
         }
         queue = new ReceiveQueue(this, showArea);
+        // start the reception of the message
+        queue.start();
+
     }
 
-    public void broadcast(Message message) {
+    private void broadcastAck(Message message) {
         lock.lock();
         message.setTs(clock);
         message.setNodeID(nodeId);
-        message.setId(nodeId + ":" + clock);
         // make sure that messages are ordered by time stamp
         for (var peer : peers) {
             peer.send(message);
@@ -47,17 +55,38 @@ public class Node {
         lock.unlock();
     }
 
+    public void broadcastMessage(Message message) {
+        lock.lock();
+        message.setTs(clock);
+        message.setNodeID(nodeId);
+        message.setId(this.getNodeId() + ":" + clock);
+        // make sure that messages are ordered by time stamp
+        for (var peer : peers) {
+            peer.send(message);
+        }
+        clock++;
+        lock.unlock();
+    }
+
+    private long nextId(long localTs, long remoteTs) {
+        return Math.max(localTs, remoteTs) + 1;
+    }
+
     public void addMessage(Message msg) {
         lock.lock();
-        assert (!msg.isACK());
+        assert (!msg.isAck());
         queue.add(msg);
+        // it's safe because of reentrant lock.
+        clock = nextId(clock, msg.getTs());
+        Message ack = new Message(msg.getId(), clock, "This is a ack", this.nodeId, true);
+        broadcastAck(ack);// will not block here
+        clock++;
         // TODO: adjust clock
         lock.unlock();
     }
 
     public void addAck(Message msg) {
-        // TODO: adjust clock
-        assert (msg.isACK());
+        assert (msg.isAck());
         lock.lock();
         if (!map.containsKey(msg.getId())) {
             map.put(msg.getId(), 1);
@@ -66,7 +95,7 @@ public class Node {
             count++;
             map.put(msg.getId(), count);
         }
-
+        clock = nextId(clock, msg.getTs());
         lock.unlock();
     }
 

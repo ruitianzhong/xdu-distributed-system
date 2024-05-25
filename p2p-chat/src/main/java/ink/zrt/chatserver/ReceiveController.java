@@ -1,25 +1,22 @@
 package ink.zrt.chatserver;
 
+import ink.zrt.Configuration;
 import ink.zrt.Message;
-import ink.zrt.Node;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ReceiveController {
-
-
     @PostMapping("/")
-    String root(@RequestBody @Validated Message message) {
-        if (message.isACK()) {
-
+    String root(@RequestBody @Valid Message message) {
+        System.out.println("Controller msg:" + message);
+        if (message.isAck()) {
+            Configuration.node.addAck(message);
         } else {
-
+            Configuration.node.addMessage(message);
         }
-
         return "ok";
     }
 }

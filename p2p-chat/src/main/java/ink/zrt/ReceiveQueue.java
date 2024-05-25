@@ -71,13 +71,12 @@ public class ReceiveQueue {
     public void start() {
 
         new Thread(() -> {
-
             while (true) {
                 lock.lock();
                 if (list.isEmpty()) {
                     lock.unlock();
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(100);
                     } catch (InterruptedException e) {
                         System.out.println(e.getMessage());
                     }
@@ -87,7 +86,8 @@ public class ReceiveQueue {
                 Message m = list.getFirst();
                 if (node.nodeNum() == node.ackCount(m.getId())) {
                     node.deleteAckCountRecord(m.getId());
-                    area.append(m.getMsg() + "\n");
+                    list.removeFirst(); // remove the element ( aka, send to the application layer)
+                    area.append("Node:" + m.getNodeID() + " : " + m.getMsg() + "\n");
                 }
                 lock.unlock();
             }
