@@ -22,7 +22,7 @@ public class Client {
     }
 
     public void createAndShowGUI() {
-        JFrame f = new JFrame("P2P 群聊");
+        JFrame f = new JFrame("P2P 群聊 节点ID " + node.getNodeId());
         f.setLayout(new BorderLayout());
         f.setSize(500, 500);
         f.setLocation(300, 200);

@@ -22,10 +22,4 @@ public class Message {
         this.nodeID = nodeID;
         this.ack = isAck;
     }
-
-    public Message duplicate() {
-        return new Message(this.id, this.ts, this.msg, this.nodeID, this.ack);
-    }
-
-
 }

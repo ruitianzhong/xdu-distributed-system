@@ -6,4 +6,5 @@ settings.json
 concurrent-tcp/client
 concurrent-tcp/server
 ipc/ipc
+.idea
 
