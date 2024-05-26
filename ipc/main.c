@@ -55,6 +55,7 @@ void p1(int readfd, int writefd, struct sharedbuf *buf1, struct sharedbuf *buf2)
         char c = 'a' + (i % 26);
         buf1->cnt += 1;
         buf1->buf[i] = c;
+        printf("p1 is writing %c\n",c);
         if (sem_post(&buf1->sem2) == -1) {
             errExit("p1::sem_post::sem1");
         }
@@ -111,6 +112,7 @@ void p2(int readfd, int writefd, struct sharedbuf *buf1, struct sharedbuf *buf2)
     for (int i = 0; i < BUFSIZE; i++) {
         buf2->cnt++;
         buf2->buf[i] = '0' + i % 10;
+        printf("p2 is writing %c\n",buf2->buf[i]);
         if (sem_post(&buf2->sem1) == -1) {
             errExit("sem_post");
         }

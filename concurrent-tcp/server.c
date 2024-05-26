@@ -103,7 +103,7 @@ int main(int argc, char *argv[]) {
 
 
     if (bind(sockfd, (struct sockaddr *) &server_addr, sizeof(server_addr)) == -1) {
-        perror("accept");
+        perror("bind");
         exit(EXIT_FAILURE);
     }
 

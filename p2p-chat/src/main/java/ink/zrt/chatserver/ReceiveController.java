@@ -12,6 +12,9 @@ public class ReceiveController {
     @PostMapping("/")
     String root(@RequestBody @Valid Message message) {
         System.out.println("Controller msg:" + message);
+        if (Configuration.setIfExist(message.getId())) {
+            return "ok";
+        }
         if (message.isAck()) {
             Configuration.node.addAck(message);
         } else {

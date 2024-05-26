@@ -42,18 +42,6 @@ public class Node {
 
     }
 
-    private void broadcastAck(Message message) {
-        lock.lock();
-        message.setTs(clock);
-        message.setNodeID(nodeId);
-        // make sure that messages are ordered by time stamp
-        for (var peer : peers) {
-            peer.send(message);
-        }
-        // TODO add clock
-        clock++;
-        lock.unlock();
-    }
 
     public void broadcastMessage(Message message) {
         lock.lock();
@@ -78,8 +66,8 @@ public class Node {
         queue.add(msg);
         // it's safe because of reentrant lock.
         clock = nextId(clock, msg.getTs());
-        Message ack = new Message(msg.getId(), clock, "This is a ack", this.nodeId, true);
-        broadcastAck(ack);// will not block here
+        Message ack = new Message("-1", clock, msg.getId(), this.nodeId, true);
+        broadcastMessage(ack);
         clock++;
         // TODO: adjust clock
         lock.unlock();
@@ -88,12 +76,13 @@ public class Node {
     public void addAck(Message msg) {
         assert (msg.isAck());
         lock.lock();
-        if (!map.containsKey(msg.getId())) {
-            map.put(msg.getId(), 1);
+        String msgID = msg.getMsg();
+        if (!map.containsKey(msgID)) {
+            map.put(msgID, 1);
         } else {
-            int count = map.get(msg.getId());
+            int count = map.get(msgID);
             count++;
-            map.put(msg.getId(), count);
+            map.put(msgID, count);
         }
         clock = nextId(clock, msg.getTs());
         lock.unlock();
