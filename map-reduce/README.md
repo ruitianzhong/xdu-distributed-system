@@ -97,3 +97,14 @@ ssh localhost
 ### Fully Distributed Operation
 
 TBD
+
+## Hadoop API
+
+### Combiner
+
+Users can optionally specify a combiner, via Job.setCombinerClass(Class), to perform local aggregation of the
+intermediate outputs, which helps to cut down the amount of data transferred from the Mapper to the Reducer.
+
+### setOutputKeyClass()
+
+Set the key class for the job output data.
