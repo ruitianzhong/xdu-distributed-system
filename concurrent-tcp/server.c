@@ -11,6 +11,9 @@
 #include <sys/wait.h>
 #define BUF_SIZE 100
 
+volatile sig_atomic_t exit_count = 0;
+volatile sig_atomic_t fork_count = 0;
+
 void handleSIGCHILD(int sig) {
     int status;
 
@@ -24,9 +27,10 @@ void handleSIGCHILD(int sig) {
         perror("waitpid");
         return;
     }
-
+    const int f = fork_count;
+    exit_count++;
     if (WIFEXITED(status)) {
-        printf("child process %d return %d\n", pid,WEXITSTATUS(status));
+        printf("child process %d return %d current child process number:%d\n", pid,WEXITSTATUS(status), f - exit_count);
     }
 }
 
@@ -95,6 +99,14 @@ int main(int argc, char *argv[]) {
         perror("socket");
         exit(EXIT_FAILURE);
     }
+
+    const int on = 1;
+    if (setsockopt(sockfd,SOL_SOCKET,SO_REUSEADDR, &on, sizeof(on)) == -1) {
+        perror("setsoctopt");
+        exit(EXIT_FAILURE);
+    }
+    printf("reuse address\n");
+
     struct sockaddr_in server_addr, peer_addr;
     bzero(&server_addr, sizeof(server_addr));
     server_addr.sin_family = AF_INET;
@@ -120,6 +132,9 @@ int main(int argc, char *argv[]) {
             perror("accept");
             exit(EXIT_FAILURE);
         }
+        fork_count++;
+        int ecount = exit_count;
+        printf("the number of child process : %d\n", fork_count - ecount);
         handleConnection(connfd, sockfd);
     }
 }
