@@ -17,7 +17,7 @@ public class AvgGradeByStudent {
     public static class StudentMapper extends Mapper<Object, Text, Text, FloatWritable> {
         @Override
         public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
-            String line = key.toString();
+            String line = value.toString();
             String[] info = line.split(",");
             if (info.length != 5) {
                 System.out.println("Warning info.length: " + info.length);
@@ -43,7 +43,7 @@ public class AvgGradeByStudent {
         job.setMapperClass(StudentMapper.class);
         job.setReducerClass(FloatAvgReducer.class);
         job.setOutputKeyClass(Text.class);
-        job.setOutputKeyClass(FloatWritable.class);
+        job.setOutputValueClass(FloatWritable.class);
 
         FileInputFormat.addInputPath(job, new Path(args[0]));
         FileOutputFormat.setOutputPath(job, new Path(args[1]));

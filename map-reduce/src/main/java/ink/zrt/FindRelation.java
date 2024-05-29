@@ -23,11 +23,9 @@ public class FindRelation {
                 System.out.println("Warning: pair length!=2");
                 return;
             }
-            String parent = pair[0], child = pair[1];
+            String parent = pair[0].trim(), child = pair[1].trim();
             Text parentKey = new Text(parent), childKey = new Text(child);
-            Text parentVal = new Text(), childValue = new Text();
-            childValue.set(parent + ",parent");
-            parentVal.set(childValue + ",child");
+            Text parentVal = new Text(child + ",child"), childValue = new Text(parent + ",parent");
             context.write(parentKey, parentVal);
             context.write(childKey, childValue);
         }
@@ -43,7 +41,8 @@ public class FindRelation {
             for (Text text : values) {
                 String[] pair = text.toString().split(",");
                 if (pair.length != 2) {
-                    System.out.println("reducer: pair.length!=2");
+                    System.out.println("reducer: pair.length!=2 pair.length=" + pair.length);
+                    System.out.println(pair[0] + " " + pair[1] + " " + pair[2]);
                     return;
                 }
                 if (Objects.equals(pair[1], "child")) {
@@ -53,10 +52,10 @@ public class FindRelation {
                 }
             }
 
-            for (int i = 0; i < grandparentList.size(); i++) {
-                for (int j = 0; j < grandparentList.size(); j++) {
-                    Text outKey = new Text(grandparentList.get(i)),
-                            outVal = new Text(grandchildList.get(j));
+            for (String grandparent : grandparentList) {
+                for (String grandchild : grandchildList) {
+                    Text outKey = new Text(grandparent),
+                            outVal = new Text(grandchild);
                     context.write(outKey, outVal);
                 }
             }

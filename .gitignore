@@ -7,4 +7,5 @@ concurrent-tcp/client
 concurrent-tcp/server
 ipc/ipc
 .idea
-
+spark-python/*output*
+map-reduce/*output*
