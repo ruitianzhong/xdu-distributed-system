@@ -7,6 +7,13 @@
     <groupId>ink.zrt</groupId>
     <artifactId>spark</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
+            <artifactId>spark-core_2.12</artifactId>
+            <version>3.5.1</version>
+        </dependency>
+    </dependencies>
 
     <properties>
         <maven.compiler.source>18</maven.compiler.source>

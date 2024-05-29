@@ -28,6 +28,7 @@ public class AvgGradeByClass {
             Text outKey = new Text();
             FloatWritable outValue = new FloatWritable();
             outKey.set(newKey);
+            outValue.set(grade);
             context.write(outKey, outValue);
         }
     }
