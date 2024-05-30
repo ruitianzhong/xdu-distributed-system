@@ -108,3 +108,24 @@ intermediate outputs, which helps to cut down the amount of data transferred fro
 ### setOutputKeyClass()
 
 Set the key class for the job output data.
+
+### Using Hadoop Distributed File System
+
+```shell
+hadoop fs -mkdir /home/{your user name on Linux}
+hadoop fs -mkdir test_data
+hadoop fs -put ./data/grades.txt test_data
+hadoop fs -put ./data/child-parent.txt test_data
+hadoop fs -ls
+hadoop fs -cat  avg_by_class_output/*
+```
+
+Or vist : http://localhost:9870 directly
+
+It seems that current directory is mapped into fs without further configuration.
+
+set the variable in `.bashrc`
+
+```shell
+export PDSH_RCMD_TYPE=ssh
+```
