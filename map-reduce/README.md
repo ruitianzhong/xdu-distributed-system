@@ -111,8 +111,16 @@ Set the key class for the job output data.
 
 ### Using Hadoop Distributed File System
 
+initialization:
+
 ```shell
-hadoop fs -mkdir /home/{your user name on Linux}
+bin/hdfs namenode -format
+sbin/start-dfs.sh
+```
+
+```shell
+hadoop fs -mkdir /user
+hadoop fs -mkdir /user/{your user name on Linux}
 hadoop fs -mkdir test_data
 hadoop fs -put ./data/grades.txt test_data
 hadoop fs -put ./data/child-parent.txt test_data
