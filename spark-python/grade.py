@@ -17,8 +17,6 @@ table = df.withColumn("class", split_cols.getItem(0)).withColumn("name", split_c
 # It seems that the empty line is ignored
 print("[INFO] total record number is " + str(table.count()))
 
-table.select(sf.avg("grade").alias("Average grade")).groupBy("name")
-
 avg_by_student = table.filter(table.type == "必修") \
     .groupBy("name") \
     .avg("grade") \
