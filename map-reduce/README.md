@@ -137,3 +137,9 @@ set the variable in `.bashrc`
 ```shell
 export PDSH_RCMD_TYPE=ssh
 ```
+
+
+```shell
+./run_hadoop_mapreduce.sh clean # clean the output 
+./run_ha
+```

@@ -4,11 +4,19 @@ then
   echo "Need 1 argument; exit;"
   exit 1
 fi
-mvn clean
-mvn package
 avg_by_class_output_dir="avg_by_class_output"
 avg_by_student_output_dir="avg_by_student_output"
 relation_output_dir="relation_output"
+
+if [ "$1" = "clean" ]
+then
+  echo "rm output file"
+  rm -rf "${relation_output_dir}" "${avg_by_class_output_dir}" "${avg_by_student_output_dir}"
+  exit 0
+fi
+mvn clean
+mvn package
+
 JAR_PATH="target/map-reduce-1.0-SNAPSHOT.jar"
 DATA_PREFIX="test_data"
 
